@@ -1,0 +1,35 @@
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
+from typing import Optional, List, Dict
+import asyncio
+import agent.LuciaChatAgent
+import server.service.TTSService
+
+
+
+app = FastAPI(title="LuciaChatAgent API", version="1.0.0")
+
+class ChatRequest(BaseModel):
+    message: str
+    thread_id: Optional[str] = None
+
+class ChatResponse(BaseModel):
+    response: str
+    thread_id: str
+    history: Optional[List[Dict[str, str]]] = None
+
+class TTSRequest(BaseModel):
+    text: str
+
+@app.post("/chat/common")
+async def commonChat(request: ChatRequest):
+    response = await agent.LuciaChatAgent.commonChat(request.message)
+    yield response
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
