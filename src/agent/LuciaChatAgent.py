@@ -1,7 +1,5 @@
 ﻿import os
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
+from langgraph.graph.state import CompiledStateGraph
 from langchain.agents import create_agent
 from langchain.agents.middleware import SummarizationMiddleware
 from langgraph.checkpoint.memory import InMemorySaver
@@ -25,7 +23,7 @@ summarization = SummarizationMiddleware(
 
 with PostgresStore.from_conn_string(DB_BASE_URL) as store:
     store.setup()
-    LuciaChatAgent = create_agent(
+LuciaChatAgent : CompiledStateGraph = create_agent(
         name="LuciaChatAgent",
         model=chatModel,
         store=store,

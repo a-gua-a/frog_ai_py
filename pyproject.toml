@@ -19,6 +19,7 @@ dependencies = [
     "cos-python-sdk-v5>=1.0.0",
     "dashscope>=1.25.21",
     "fastapi>=0.137.1",
+    "uvicorn>=0.27.1",
 ]
 
 

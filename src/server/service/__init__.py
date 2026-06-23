@@ -1,3 +1,3 @@
-from .TTSService import TTSService, ttsService
+from .ChatService import chatService
 
-__all__ = ["TTSService", "ttsService"]
+__all__ = ["chatService"]

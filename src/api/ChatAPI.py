@@ -2,11 +2,7 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Optional, List, Dict
-import asyncio
-import agent.LuciaChatAgent
-import server.service.TTSService
-
-
+from server.service import chatService
 
 app = FastAPI(title="LuciaChatAgent API", version="1.0.0")
 
@@ -24,8 +20,11 @@ class TTSRequest(BaseModel):
 
 @app.post("/chat/common")
 async def commonChat(request: ChatRequest):
-    response = await agent.LuciaChatAgent.commonChat(request.message)
-    yield response
+    async def generate():
+        async for chunk in chatService.commonChat(request):
+            yield chunk
+    
+    return StreamingResponse(generate(), media_type="text/event-stream")
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
