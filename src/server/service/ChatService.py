@@ -1,14 +1,15 @@
 from langchain_core.messages import HumanMessage
 from typing import Any
 from langchain_core.runnables import RunnableConfig
-from agent.LuciaChatAgent import LuciaChatAgent
 import common.entity.ChatRequest as ChatRequest
+import agent.LuciaChatAgent
 import uuid
 import logging
 logger = logging.getLogger(__name__)
 
 class ChatService:
     async def commonChat(self, request: ChatRequest) -> Any:
+        chatAgent = agent.LuciaChatAgent.LuciaChatAgent
         if request.message is None:
             raise Exception("问题不能为空")
         message = request.message
@@ -24,7 +25,7 @@ class ChatService:
         userInput = {
             "messages": [HumanMessage(content=message)]
         }
-        async for chunk in LuciaChatAgent.astream(
+        async for chunk in chatAgent.astream(
             input=userInput,
             config=config,
             stream_mode="messages"

@@ -1,3 +1,4 @@
+import asyncio
 from dotenv import load_dotenv
 load_dotenv()
 import logging
@@ -12,4 +13,6 @@ from api.ChatAPI import app
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    config = uvicorn.Config(app=app, host="127.0.0.1", port=8000)
+    server = uvicorn.Server(config)
+    asyncio.run(server.serve(), loop_factory=asyncio.SelectorEventLoop)
