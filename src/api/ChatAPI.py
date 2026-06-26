@@ -7,6 +7,7 @@ from typing import Optional, List, Dict
 from agent.LuciaChatAgent import initLuciaChatAgent
 from server.service import chatService
 from server.service.TTSService import ttsService
+from server.service.FileService import fileService
 import asyncio
 import logging
 logger = logging.getLogger(__name__)
@@ -104,7 +105,11 @@ async def audioChat(websocket: WebSocket):
 
 @app.post("/newVoice")
 async def newVoice():
-    ttsService.newVoice()
+    await ttsService.newVoice()
+
+@app.post("/uploadVoiceFile")
+async def uploadVoiceFile():
+    return fileService.uploadVoiceFile("LuciaVoice.mp3")
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}

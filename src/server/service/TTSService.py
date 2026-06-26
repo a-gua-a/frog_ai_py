@@ -3,10 +3,13 @@ import base64
 import asyncio
 from queue import Queue
 from dashscope.audio.qwen_tts_realtime import *
+import dashscope
 from typing import Any
 from dashscope.audio.tts_v2 import VoiceEnrollmentService
 from common.utils.OSSUtils import getSystemFileUrl
 from common.properties.Voice import voice
+import logging
+logger = logging.getLogger(__name__)
 
 class StreamingTTSCallback(QwenTtsRealtimeCallback):
     def __init__(self, q):
@@ -39,9 +42,9 @@ class StreamingTTSCallback(QwenTtsRealtimeCallback):
 
 class TTSService:
     def __init__(self):
-        self.model = os.getenv('TTSMODEL')
+        self.model = os.getenv('TTSMODLE')
         self.url = 'wss://dashscope.aliyuncs.com/api-ws/v1/realtime'
-
+        dashscope.base_http_api_url = os.getenv('DASHSCOPE_BASE_HTTP_API_URL')
 
     async def getAudioStream(self, voiceId: str, textStream) -> Any:
         audioQueue = Queue()
@@ -74,8 +77,9 @@ class TTSService:
 
         await sender
 
-    async def newVoice(self, fileName: str = "LuciaVoice.wav"):
+    async def newVoice(self, fileName: str = "LuciaVoice.mp3"):
         voiceUrl = getSystemFileUrl(fileName)
+        logger.info(f'voiceUrl: {voiceUrl}')
         voiceEnrollmentService = VoiceEnrollmentService()
         if self.model is None:
             raise Exception("TTSMODEL 未配置")
@@ -84,6 +88,7 @@ class TTSService:
             url=voiceUrl,
             prefix=fileName.split('.')[0]
         )
+        logger.info(f"成功创建语音 {voice_id}")
         voice.setVoiceId(voice_id)
 
 

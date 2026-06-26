@@ -17,7 +17,7 @@ ossClient = CosS3Client(config)
 
 # 上传系统文件到oss systemFiles目录
 def uploadSystemFileToOSS(fileName: str):
-    root = os.getcwd()
+    root = os.path.dirname(os.path.dirname(os.getcwd()))
     filePath = f"{root}/static/tempFiles/{fileName}"
     with open(filePath, 'rb') as fp:
         try:
@@ -54,9 +54,11 @@ def uploadUserFileToOSS(fileName: str):
 # 获取oss systemFiles目录文件的URL
 def getSystemFileUrl(fileName: str) -> str:
     try:
-        response = ossClient.get_object_url(
+        response = ossClient.get_presigned_url(
             Bucket=f'frog-ai-{os.getenv("OSS_APPID")}',
             Key=f"systemFiles/{fileName}",
+            Method='GET',
+            Expired=300
         )
         logging.info(f"成功获取 {fileName} 的 URL,response:{response}")
         return response
@@ -67,9 +69,11 @@ def getSystemFileUrl(fileName: str) -> str:
 # 获取oss userFiles目录文件的URL
 def getUserFileUrl(fileName: str) -> str:
     try:
-        response = ossClient.get_object_url(
+        response = ossClient.get_presigned_url(
             Bucket=f'frog-ai-{os.getenv("OSS_APPID")}',
             Key=f"userFiles/{fileName}",
+            Method='POST',
+            Expired=300
         )
         logging.info(f"成功获取 {fileName} 的 URL,response:{response}")
         return response
