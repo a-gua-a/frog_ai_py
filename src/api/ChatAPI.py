@@ -103,6 +103,10 @@ async def audioChat(websocket: WebSocket):
         await websocket.close()
         logger.info("通讯结束，WebSocket连接正常关闭")
 
+@app.get("/chat/detail/{threadId}")
+async def getDetail(threadId:str):
+    return await chatService.getDetail(threadId)
+
 @app.post("/newVoice")
 async def newVoice():
     await ttsService.newVoice()
